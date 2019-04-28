@@ -1,5 +1,5 @@
 import praw
-from flask import Flask, request
+from flask import Flask, request, render_template
 import sqlite3
 
 app = Flask(__name__)
@@ -48,6 +48,10 @@ loginText = '''
 	</form>
 	</body>
 '''
+
+@app.route('/test')
+def test():
+	return render_template('base.html')
 
 @app.route('/')
 def home():
