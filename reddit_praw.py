@@ -22,7 +22,7 @@ imgurpic = '<center><blockquote class="imgur-embed-pub" lang="en" data-id="AAA" 
 
 gfycat = '''<center><div style='position:relative; padding-bottom:calc(42.19% + 44px)'><iframe src='https://gfycat.com/ifr/AAA' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div></center>'''
 
-pic = '<center><img height="1080" src="AAA"></center>'
+pic = '<center><div class="votes"><a href="localhost:8080/vote/up@BBB" target="_blank">Upvote</a><a href="localhost:8080/vote/clear@BBB" target="_blank">Clear vote</a><a href="localhost:8080/vote/down@BBB" target="_blank">Downvote</a><a href="localhost:8080/save/BBB" target="_blank">Save</a></div><img class="pic" height="1080" src="AAA"></center>'
 
 text = "<center><p style='color:white;'><b>Text Post: AAA</b></p></center>"
 
@@ -48,6 +48,10 @@ loginText = '''
 	</form>
 	</body>
 '''
+
+@app.route('/')
+def home():
+	return 'progress'
 
 @app.route('/user')
 def user():
@@ -90,6 +94,26 @@ def posts(sub):
 		return getPosts(path[0], path[1], path[2])
 	except IndexError:
 		return "Format: localhost:8080/sub/[subreddit]/[no. posts to show]/[sort(@time)]"
+
+@app.route('/vote/<path:subpath>')
+def vote(subpath):
+	vt = subpath.split("@")
+	sub = reddit.submission(id=vt[1])
+	if vt[0] == "up":
+		sub.upvote()
+	elif vt[0] == "down":
+		sub.downvote()
+	elif vt[0] == "clear":
+		sub.clear_vote()
+	else:
+		return "false vote type"
+	return "succes"
+
+@app.route('/save/<postId>')
+def savePost(postId):
+	sub = reddit.submission(id=postId)
+	sub.save()
+	return 'succes'
 
 def getPosts(sub, limit, sort):
 	subreddit = reddit.subreddit(sub)
@@ -135,7 +159,7 @@ def getPosts(sub, limit, sort):
 				out = ''
 				if '.jpg' not in url and '.png' not in url and '.jpeg' not in url:
 					out = ".png"
-				main += pic.replace("AAA", url + out)
+				main += pic.replace("AAA", url + out).replace("BBB", submission.id)
 			main += "</br>\n"
 		except AttributeError:
 			continue
