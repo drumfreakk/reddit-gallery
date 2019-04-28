@@ -121,7 +121,6 @@ def savePost(postId):
 
 def getPosts(sub, limit, sort):
 	subreddit = reddit.subreddit(sub)
-	main = " <body style='background-color:343434;'> "
 
 	doGfy = False
 
@@ -147,28 +146,30 @@ def getPosts(sub, limit, sort):
 	else:
 		return "error"	
 
+	items = []
+
 	for submission in subr:
 		try:
 			url = submission.url
 			if 'https://imgur.com/a/' in url:
-				main += imguralbum.replace("AAAAA", url[20:])
+				outp = imguralbum.replace("AAAAA", url[20:])
 			elif "comments" in url:
-				main += text.replace("AAA", submission.title)
+				outp = text.replace("AAA", submission.title)
 			elif "https://gfycat.com/" in url:
 				if doGfy == False:
-					main += text.replace("Text", "Gfycat").replace("AAA", submission.title)
+					outp = text.replace("Text", "Gfycat").replace("AAA", submission.title)
 				else:
-					main += gfycat.replace("AAA", url.split("/")[-1])
+					outp= gfycat.replace("AAA", url.split("/")[-1])
 			else:
 				out = ''
 				if '.jpg' not in url and '.png' not in url and '.jpeg' not in url:
 					out = ".png"
-				main += pic.replace("AAA", url + out).replace("BBB", submission.id)
-			main += "</br>\n"
+				outp = pic.replace("AAA", url + out).replace("BBB", submission.id)
+			outp += "</br>\n"
+			items.append(outp)
 		except AttributeError:
 			continue
-	main += "</body>"
-	return main    # Output: the URL the submission points to
+	return render_template('base.html', pics=items)
 
 if __name__ == '__main__':
 	app.run(debug=True, port=8080)
