@@ -1,6 +1,8 @@
 import praw
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify, json
 import sqlite3
+
+import pprint
 
 app = Flask(__name__)
 
@@ -16,15 +18,20 @@ for row in c.execute('SELECT * FROM accounts'):
 
 conn.close()
 
-imguralbum = '<center><iframe allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="height: 700px; width: 500px; margin: 10px 0px; padding: 0px;" class="imgur-embed-iframe-pub imgur-embed-iframe-pub-a-AAAAA-true-500" scrolling="no" src="https://imgur.com/a/AAAAA/embed?pub=true&amp;ref=https%3A%2F%2Fimgur.com%2Fa%2FAAAAA&amp;analytics=false&amp;w=500" id="imgur-embed-iframe-pub-a-AAAAA"></iframe></center>'
+start = "<center id='POSTID'><p class='title'>TITLE</p>"
 
-imgurpic = '<center><blockquote class="imgur-embed-pub" lang="en" data-id="AAA" data-context="false"><a href="//imgur.com/AAA">What the Event Horizon Telescope didn&#39;t capture (nyuunzi) [EHT]</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script></center>'
+end = '''<div class="votes"><a href='#POSTID' onclick="vote('up', 'POSTID')" class='notUp' id='POSTIDup'>Upvote </a><a href='#POSTID' onclick="vote('clear', 'POSTID')" class='clear' id='POSTIDclear'>Clear vote </a><a href='#POSTID' onclick="vote('down', 'POSTID')" class='notDown' id='POSTIDdown'>Downvote </a><a onclick='save("POSTID")' href='#POSTID' class='notSave' id='POSTIDsave'>Save</a></div></center>'''
 
-gfycat = '''<center><div style='position:relative; padding-bottom:calc(42.19% + 44px)'><iframe src='https://gfycat.com/ifr/AAA' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div></center>'''
 
-pic = '<center><div class="votes"><a href="localhost:8080/vote/up@BBB" target="_blank">Upvote</a><a href="localhost:8080/vote/clear@BBB" target="_blank">Clear vote</a><a href="localhost:8080/vote/down@BBB" target="_blank">Downvote</a><a href="localhost:8080/save/BBB" target="_blank">Save</a></div><img class="pic" height="1080" src="AAA"></center>'
+imguralbum = start + '<iframe id="POSTID" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="height: 700px; width: 500px; margin: 10px 0px; padding: 0px;" class="imgur-embed-iframe-pub imgur-embed-iframe-pub-a-WEBID-true-500" scrolling="no" src="https://imgur.com/a/WEBID/embed?pub=true&amp;ref=https%3A%2F%2Fimgur.com%2Fa%2FWEBID&amp;analytics=false&amp;w=500" id="imgur-embed-iframe-pub-a-WEBID"></iframe>' + end
 
-text = "<center><p style='color:white;'><b>Text Post: AAA</b></p></center>"
+imgurpic = start + '<blockquote class="imgur-embed-pub" lang="en" data-id="WEBID" data-context="false"><a href="//imgur.com/WEBID"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>' + end
+
+gfycat = start + '''<div style='position:relative; padding-bottom:calc(42.19% + 44px)'><iframe src='https://gfycat.com/ifr/WEBID' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>''' + end
+
+pic = start + '''<img class="pic" height="1080" src="SRC">''' + end
+
+text = "<center><p class='title'>Text Post: TITLE</p>" + end
 
 loginText = '''  
 	<body>	
@@ -49,15 +56,11 @@ loginText = '''
 	</body>
 '''
 
-@app.route('/test')
-def test():
-	return render_template('base.html')
-
 @app.route('/')
 def home():
 	return 'progress'
 
-@app.route('/user')
+@app.route('/user', methods=['GET', 'POST'])
 def user():
 	print(reddit.user.me())
 	return "hi"
@@ -99,24 +102,40 @@ def posts(sub):
 	except IndexError:
 		return "Format: localhost:8080/sub/[subreddit]/[no. posts to show]/[sort(@time)]"
 
-@app.route('/vote/<path:subpath>')
+@app.route('/vote/<path:subpath>', methods=['POST', 'GET'])
 def vote(subpath):
-	vt = subpath.split("@")
-	sub = reddit.submission(id=vt[1])
-	if vt[0] == "up":
-		sub.upvote()
-	elif vt[0] == "down":
-		sub.downvote()
-	elif vt[0] == "clear":
+	if request.method == 'POST':
+		sub = reddit.submission(id=request.form['id'])
+		vtT = request.form['voteType']
+	else:
+		vt = subpath.split("@")
+		sub = reddit.submission(id=vt[1])
+		vtT = vt[0]
+	if vtT == "up":
+		if sub.likes == True:
+			sub.clear_vote()
+		else:
+			sub.upvote()
+	elif vtT == "down":
+		if sub.likes == False:
+			sub.clear_votes()
+		else:
+			sub.downvote()
+	elif vtT == "clear":
 		sub.clear_vote()
 	else:
 		return "false vote type"
 	return "succes"
 
-@app.route('/save/<postId>')
+@app.route('/save/<postId>', methods=['POST', 'GET'])
 def savePost(postId):
+	if request.method == 'POST':
+		postId = request.form['id']
 	sub = reddit.submission(id=postId)
-	sub.save()
+	if sub.saved == False:
+		sub.save()
+	else:
+		sub.unsave()
 	return 'succes'
 
 def getPosts(sub, limit, sort):
@@ -149,26 +168,37 @@ def getPosts(sub, limit, sort):
 	items = []
 
 	for submission in subr:
+		#pprint.pprint(vars(submission))
 		try:
 			url = submission.url
 			if 'https://imgur.com/a/' in url:
-				outp = imguralbum.replace("AAAAA", url[20:])
+				outp = imguralbum.replace("WEBID", url[20:])
 			elif "comments" in url:
-				outp = text.replace("AAA", submission.title)
+				outp = text.replace("WEBID", submission.title)
 			elif "https://gfycat.com/" in url:
 				if doGfy == False:
-					outp = text.replace("Text", "Gfycat").replace("AAA", submission.title)
+					outp = text.replace("Text", "Gfycat").replace("WEBID", submission.title)
 				else:
-					outp= gfycat.replace("AAA", url.split("/")[-1])
+					outp= gfycat.replace("WEBID", url.split("/")[-1])
+			elif 'https://i.imgur.com/' in url and '.gifv' in url:
+				outp = imgurpic.replace("WEBID", url[20:-5])
 			else:
 				out = ''
-				if '.jpg' not in url and '.png' not in url and '.jpeg' not in url:
+				if '.jpg' not in url and '.png' not in url and '.jpeg' not in url and '.gifv' not in url and '.gif' not in url:
 					out = ".png"
-				outp = pic.replace("AAA", url + out).replace("BBB", submission.id)
+				outp = pic.replace("SRC", url + out)
 			outp += "</br>\n"
+			outp = outp.replace("TITLE", submission.title).replace("POSTID", submission.id)
+			if submission.saved == True:
+				outp = outp.replace('Save', 'Unsave').replace('notSave', 'save')
+			if submission.likes == True:
+				outp = outp.replace('notUp', 'up')
+			elif submission.likes == False:
+				outp = outp.replace('notDown', 'down')
 			items.append(outp)
 		except AttributeError:
-			continue
+			print("AttributeError")
+			continue	
 	return render_template('base.html', pics=items)
 
 if __name__ == '__main__':

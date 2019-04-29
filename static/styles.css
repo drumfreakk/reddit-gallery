@@ -1,3 +1,25 @@
 body {
-	background-color:343434;
+	background-color:#343434;
+}
+
+.title {
+	color: white;
+	font-weight: bold;
+}
+
+a:link, a:visited, a:hover, a:active {
+	text-decoration: none;
+}
+
+
+.notUp, .notDown, .clear, .notSave, .save {
+	color: white;
+}
+
+.up {
+	color: #ff4500;
+}
+
+.down {
+	color: #7193ff;
 }
