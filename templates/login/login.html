@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+	{% block error %}{% endblock %}
+
+	<form class='text' method="post">
+    	<label for="username">Username </label>
+    	<input name="username" id="username" required>
+		</br>
+    	<label for="password">Password </label>
+    	<input type="password" name="password" id="password" required>
+		</br>
+
+		<label for="id">Client Id </label>
+    	<input type="id" name="id" id="id" required>
+		</br>
+		
+		<label for="secret">Client Secret </label>
+    	<input type="secret" name="secret" id="secret" required>
+		</br>
+		
+    	<input type="submit" value="Register">
+	</form>
+{% endblock %}

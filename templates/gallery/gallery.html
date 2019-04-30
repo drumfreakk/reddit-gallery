@@ -1,0 +1,11 @@
+{% extends "gallery/picture.html" %}
+
+{% block title %}Gallery{% endblock %}
+
+{% block content %}
+
+{% for item in pics %}
+	{{item|safe}}
+{% endfor %}
+
+{% endblock %}

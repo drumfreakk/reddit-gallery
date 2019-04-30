@@ -1,0 +1,10 @@
+
+{% block img %}{% endblock %}
+
+<div class="votes">
+<a href='#{{ POSTID }}' onclick="vote('up', '{{ POSTID }}')" class='notUp' id='{{ POSTID }}up'>Upvote </a>
+<a href='#{{ POSTID }}' onclick="vote('down', '{{ POSTID }}')" class='notDown' id='{{ POSTID }}down'>Downvote </a>
+<a onclick='save("{{ POSTID }}")' href='#{{ POSTID }}' class='notsave' id='{{ POSTID }}save'>Save</a>
+</div>
+</center>
+</br>

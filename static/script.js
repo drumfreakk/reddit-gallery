@@ -37,7 +37,6 @@ $.ajax({
             data: {id: postId},
             type: 'POST',
             success: function(response) {
-				console.log('wot');
 				if (document.getElementById(postId.concat('save')).innerHTML == 'Save'){
 					document.getElementById(postId.concat('save')).className = 'save';
 					document.getElementById(postId.concat('save')).innerHTML = 'Unsave';

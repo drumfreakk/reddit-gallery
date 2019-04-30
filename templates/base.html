@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<script type=text/javascript src="{{ url_for('static', filename='jquery.min.js') }}"></script>
-<script type=text/javascript src="{{ url_for('static', filename='script.js') }}"></script>
+{% block head %}
+    <title>{% block title %}{% endblock %} - Reddit Image Slideshow</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+{% endblock %}
 </head>
 <body>
 
-{% for item in pics %}
-        {{item|safe}}
-    {% endfor %}
-
+{% block content %}{% endblock %}
 
 </body>
 </html>

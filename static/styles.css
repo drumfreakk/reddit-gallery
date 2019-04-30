@@ -2,9 +2,13 @@ body {
 	background-color:#343434;
 }
 
-.title {
+.text, .title {
 	color: white;
 	font-weight: bold;
+}
+
+#badlogin {
+	color: red;
 }
 
 a:link, a:visited, a:hover, a:active {
@@ -12,7 +16,7 @@ a:link, a:visited, a:hover, a:active {
 }
 
 
-.notUp, .notDown, .clear, .notSave, .save {
+.notUp, .notDown, .clear, .notsave, .save {
 	color: white;
 }
 

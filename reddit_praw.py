@@ -1,8 +1,14 @@
+#!/usr/bin/env python
+
 import praw
-from flask import Flask, request, render_template, jsonify, json
+from flask import Flask, request, render_template, jsonify, json, redirect, url_for, abort
 import sqlite3
 
-import pprint
+
+
+useragent = 'linux:slideshow_web:v1.0.0 (by /u/Kip-Bot)'
+
+
 
 app = Flask(__name__)
 
@@ -12,58 +18,39 @@ c = conn.cursor()
 for row in c.execute('SELECT * FROM accounts'):
 	reddit = praw.Reddit(client_id=row[2],
                      client_secret=row[3],
-                     user_agent='linux:slideshow_web:v1.0.0 (by /u/Kip-Bot)',
+                     user_agent=useragent,
 					 password=row[1],
 					 username=row[0])
 
 conn.close()
 
-start = "<center id='POSTID'><p class='title'>TITLE</p>"
-
-end = '''<div class="votes"><a href='#POSTID' onclick="vote('up', 'POSTID')" class='notUp' id='POSTIDup'>Upvote </a><a href='#POSTID' onclick="vote('clear', 'POSTID')" class='clear' id='POSTIDclear'>Clear vote </a><a href='#POSTID' onclick="vote('down', 'POSTID')" class='notDown' id='POSTIDdown'>Downvote </a><a onclick='save("POSTID")' href='#POSTID' class='notSave' id='POSTIDsave'>Save</a></div></center>'''
 
 
-imguralbum = start + '<iframe id="POSTID" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="height: 700px; width: 500px; margin: 10px 0px; padding: 0px;" class="imgur-embed-iframe-pub imgur-embed-iframe-pub-a-WEBID-true-500" scrolling="no" src="https://imgur.com/a/WEBID/embed?pub=true&amp;ref=https%3A%2F%2Fimgur.com%2Fa%2FWEBID&amp;analytics=false&amp;w=500" id="imgur-embed-iframe-pub-a-WEBID"></iframe>' + end
 
-imgurpic = start + '<blockquote class="imgur-embed-pub" lang="en" data-id="WEBID" data-context="false"><a href="//imgur.com/WEBID"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>' + end
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('error/404.html'), 404
 
-gfycat = start + '''<div style='position:relative; padding-bottom:calc(42.19% + 44px)'><iframe src='https://gfycat.com/ifr/WEBID' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>''' + end
+@app.errorhandler(400)
+def page_not_found(error):
+    return render_template('error/400.html'), 400
 
-pic = start + '''<img class="pic" height="1080" src="SRC">''' + end
+@app.errorhandler(418)
+def page_not_found(error):
+    return render_template('error/418.html'), 418
 
-text = "<center><p class='title'>Text Post: TITLE</p>" + end
 
-loginText = '''  
-	<body>	
-	<form method="post">
-    	<label for="username">Username</label>
-    	<input name="username" id="username" required>
-		</br>
-    	<label for="password">Password</label>
-    	<input type="password" name="password" id="password" required>
-		</br>
 
-		<label for="id">Id</label>
-    	<input type="id" name="id" id="id" required>
-		</br>
-		
-		<label for="secret">Secret</label>
-    	<input type="secret" name="secret" id="secret" required>
-		</br>
-		
-    	<input type="submit" value="Register">
-	</form>
-	</body>
-'''
 
 @app.route('/')
 def home():
-	return 'progress'
+	abort(418)
 
-@app.route('/user', methods=['GET', 'POST'])
+
+@app.route('/user')
 def user():
-	print(reddit.user.me())
-	return "hi"
+	return render_template('misc/user.html', username=str(reddit.user.me()))
+
 
 @app.route('/set_user', methods=['POST', 'GET'])
 def setUser():
@@ -74,7 +61,7 @@ def setUser():
 			c = conn.cursor()
 			reddit = praw.Reddit(client_id=request.form['id'],
                      client_secret=request.form['secret'],
-                     user_agent='linux:slideshow_web:v1.0.0 (by /u/Kip-Bot)',
+                     user_agent=useragent,
 					 password=request.form['password'],
 					 username=request.form['username'])
 			reddit.user.me()
@@ -88,44 +75,89 @@ def setUser():
 			conn.commit()
 			conn.close()
 
-			return 'Succes!'# + reddit.user.me()
+			return redirect(url_for('user'))
 		except:
 			conn.close()
-			return "<p style='color: red;'><b>False Login</b></p>" + loginText
-	return loginText
+			return render_template('login/login_error.html') #"<p style='color: red;'><b>False Login</b></p>" + loginText
+	return render_template('login/login.html')#loginText
 
-@app.route('/<path:sub>')
+
+@app.route('/r/<path:sub>')
 def posts(sub):
 	path = sub.split("/")
 	try:
-		return getPosts(path[0], path[1], path[2])
+		subreddit = reddit.subreddit(path[0])
+		doGfy = False
+		limit = path[1]
+		sort = path[2]
+
+		if "&" in sort:
+			sortB = sort.split("&")
+			sort = sortB[0]
+			if sortB[1] == "gfycat":
+				doGfy = True
+
+		if "top" in sort:
+			subr = subreddit.top(sort.split("@")[1], limit=int(limit))
+		elif "controversial" in sort:
+			subr = subreddit.controversial(sort.split("@")[1], limit=int(limit))
+		elif sort == "hot":
+			subr = subreddit.hot(limit=int(limit))
+		elif sort == "rising":
+			subr = subreddit.rising(limit=int(limit))
+		elif sort == "new":
+			subr = subreddit.new(limit=int(limit))
+		elif sort == "gilded":
+			subr = subreddit.gilded(limit=int(limit))
+		else:
+			abort(400)
+
+		items = []
+
+		for submission in subr:
+			items.append(preparePost(submission, doGfy))
+
+		return render_template('gallery/gallery.html', pics=items)
 	except IndexError:
-		return "Format: localhost:8080/sub/[subreddit]/[no. posts to show]/[sort(@time)]"
+		abort(400)
+
+
+@app.route('/p/<postId>')
+def post(postId):
+	try:
+		return render_template('gallery/gallery.html', pics=[preparePost(reddit.submission(id=postId))])
+	except:
+		abort(400)
+
 
 @app.route('/vote/<path:subpath>', methods=['POST', 'GET'])
 def vote(subpath):
-	if request.method == 'POST':
-		sub = reddit.submission(id=request.form['id'])
-		vtT = request.form['voteType']
-	else:
-		vt = subpath.split("@")
-		sub = reddit.submission(id=vt[1])
-		vtT = vt[0]
-	if vtT == "up":
-		if sub.likes == True:
+	try:
+		if request.method == 'POST':
+			sub = reddit.submission(id=request.form['id'])
+			vtT = request.form['voteType']
+		else:
+			vt = subpath.split("@")
+			sub = reddit.submission(id=vt[1])
+			vtT = vt[0]
+		if vtT == "up":
+			if sub.likes == True:
+				sub.clear_vote()
+			else:
+				sub.upvote()
+		elif vtT == "down":
+			if sub.likes == False:
+				sub.clear_votes()
+			else:
+				sub.downvote()
+		elif vtT == "clear":
 			sub.clear_vote()
 		else:
-			sub.upvote()
-	elif vtT == "down":
-		if sub.likes == False:
-			sub.clear_votes()
-		else:
-			sub.downvote()
-	elif vtT == "clear":
-		sub.clear_vote()
-	else:
-		return "false vote type"
-	return "succes"
+			abort(400)
+		return 'succes'
+	except IndexError:
+		abort(400)
+
 
 @app.route('/save/<postId>', methods=['POST', 'GET'])
 def savePost(postId):
@@ -138,68 +170,46 @@ def savePost(postId):
 		sub.unsave()
 	return 'succes'
 
-def getPosts(sub, limit, sort):
-	subreddit = reddit.subreddit(sub)
 
-	doGfy = False
 
-	if "&" in sort:
-		sortB = sort.split("&")
-		sort = sortB[0]
-		if sortB[1] == "gfycat":
-			doGfy = True
-		
 
-	if "top" in sort:
-		subr = subreddit.top(sort.split("@")[1], limit=int(limit))
-	elif "controversial" in sort:
-		subr = subreddit.controversial(sort.split("@")[1], limit=int(limit))
-	elif sort == "hot":
-		subr = subreddit.hot(limit=int(limit))
-	elif sort == "rising":
-		subr = subreddit.rising(limit=int(limit))
-	elif sort == "new":
-		subr = subreddit.new(limit=int(limit))
-	elif sort == "gilded":
-		subr = subreddit.gilded(limit=int(limit))
-	else:
-		return "error"	
+def preparePost(submission, doGfy=True):
+	try:
+		url = submission.url
+		pId = submission.id
+		title = submission.title
 
-	items = []
-
-	for submission in subr:
-		#pprint.pprint(vars(submission))
-		try:
-			url = submission.url
-			if 'https://imgur.com/a/' in url:
-				outp = imguralbum.replace("WEBID", url[20:])
-			elif "comments" in url:
-				outp = text.replace("WEBID", submission.title)
-			elif "https://gfycat.com/" in url:
-				if doGfy == False:
-					outp = text.replace("Text", "Gfycat").replace("WEBID", submission.title)
-				else:
-					outp= gfycat.replace("WEBID", url.split("/")[-1])
-			elif 'https://i.imgur.com/' in url and '.gifv' in url:
-				outp = imgurpic.replace("WEBID", url[20:-5])
+		if 'https://imgur.com/a/' in url:	
+			outp = render_template('gallery/imguralbum.html', TITLE=title, POSTID=pId, WEBID=url[20:])
+		elif "comments" in url:
+			outp = render_template('gallery/text.html', TITLE=title, POSTID=pId, TYPE='Text')
+		elif "https://gfycat.com/" in url:
+			if doGfy == False:
+				outp = render_template('gallery/text.html', TITLE=title, POSTID=pId, TYPE='Gfycat')
 			else:
-				out = ''
-				if '.jpg' not in url and '.png' not in url and '.jpeg' not in url and '.gifv' not in url and '.gif' not in url:
-					out = ".png"
-				outp = pic.replace("SRC", url + out)
-			outp += "</br>\n"
-			outp = outp.replace("TITLE", submission.title).replace("POSTID", submission.id)
-			if submission.saved == True:
-				outp = outp.replace('Save', 'Unsave').replace('notSave', 'save')
-			if submission.likes == True:
-				outp = outp.replace('notUp', 'up')
-			elif submission.likes == False:
-				outp = outp.replace('notDown', 'down')
-			items.append(outp)
-		except AttributeError:
-			print("AttributeError")
-			continue	
-	return render_template('base.html', pics=items)
+				outp= render_template('gallery/gfycat.html', TITLE=title, POSTID=pId, WEBID=url.split("/")[-1])
+		elif 'https://i.imgur.com/' in url and '.gifv' in url:
+			outp = render_template('gallery/imgurpic.html', TITLE=title, POSTID=pId, WEBID=url[20:-5])
+		else:
+			out = ''
+			if '.jpg' not in url and '.png' not in url and '.jpeg' not in url and '.gifv' not in url and '.gif' not in url:
+				out = ".png"
+			outp = render_template('gallery/imgfromsrc.html', SRC=url+out, POSTID=pId, TITLE=title)
+
+		if submission.saved == True:
+			outp = outp.replace('Save', 'Unsave').replace('notsave', 'save')
+		if submission.likes == True:
+			outp = outp.replace('notUp', 'up')
+		elif submission.likes == False:
+			outp = outp.replace('notDown', 'down')
+
+		return outp
+	except AttributeError:
+		print("AttributeError")
+		return 'AttributeError\n'
+
+
+
 
 if __name__ == '__main__':
 	app.run(debug=True, port=8080)
