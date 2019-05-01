@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, abort
+from flask import Flask
 
 
 def create_app(test_config=None):
@@ -26,11 +26,6 @@ def create_app(test_config=None):
 		os.makedirs(app.instance_path)
 	except OSError:
 		pass
-
-	# a simple page that says hello
-#	@app.route('/')
-#	def hello():
-#		abort(418)
 
 	from . import db
 	db.init_app(app)
