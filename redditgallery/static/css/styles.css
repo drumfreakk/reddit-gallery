@@ -1,0 +1,96 @@
+body {
+	background-color: #343434;
+}
+
+#delete {
+	color: red;
+	border: 1px solid red;
+	border-radius: 5px;
+	background-color: red;
+	width: 170px;
+	height: 70px;
+	text-decoration: none;
+	line-height: 70px;
+	text-align: center;
+}
+
+#deleteLink {
+	margin: auto;
+	display: inline-block;
+	vertical-align: middle;
+	line-height: normal;
+}
+
+.title {
+	color: white;
+	font-weight: bold;
+}
+
+.text {
+	color: white;
+}
+
+.nsfw {
+	color: red;
+	font-weight: bold;
+}
+
+#badlogin {
+	color: red;
+}
+
+a:link, a:visited, a:hover, a:active {
+	color: white;
+}
+
+
+.notUp, .notDown, .clear, .notsave, .save {
+	color: white;
+}
+
+.up {
+	color: #ff4500;
+}
+
+.down {
+	color: #7193ff;
+}
+
+.upv, .downv, .savev {
+	display: inline-block;
+}
+
+#usr {
+	text-decoration: none;
+}
+
+nav {
+	border-bottom: 5px solid grey;
+	display: flex; 
+	align-items: center; 
+	padding: 0 0.5rem; 
+}
+
+nav h1 { 
+	flex: auto; 
+	margin: 0; 
+}
+
+nav h1 a { 
+	text-decoration: none;
+	padding: 0.25rem 0.5rem; 
+}
+
+nav ul  { 
+	display: flex; 
+	list-style: none; 
+	margin: 0; 
+	padding: 0; 
+}
+
+nav ul li a, nav ul li span, header .action { 
+	display: block; 
+	padding: 0.5rem; 
+}
+
+

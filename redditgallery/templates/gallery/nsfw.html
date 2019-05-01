@@ -1,0 +1,6 @@
+{% 	extends "gallery/end.html" %}
+
+{% block img %}
+	<center id='{{ POSTID }}'><a href='{{ url_for("post.post", postId=POSTID) }}'><p class='title'>{{ TITLE }}</p>
+	<p class="nsfw">NSFW</p>
+{% endblock %}

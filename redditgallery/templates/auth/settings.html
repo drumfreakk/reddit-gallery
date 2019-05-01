@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<p class='title'>{{ msg }}</p>
+
+<form class='text' method='post'>
+	<p class='title'> Change Reddit Gallery password: </p>
+	<label for="password">New Password </label>
+    	<input type="password" name="password" id="password">
+		</br>
+	<p class='title'> Show NSFW Content?</p>
+	{% if nsfw == 1 %}
+	<input type="radio" name="show_nsfw" value="true" checked> True<br>
+	<input type="radio" name="show_nsfw" value="false"> False<br>
+	{% else %}
+	<input type="radio" name="show_nsfw" value="true"> True<br>
+	<input type="radio" name="show_nsfw" value="false" checked> False<br>
+	{% endif %}
+<input type="submit" value="Save Settings">
+</form>
+
+</br>
+</br>
+
+<a href='{{ url_for("auth.delete_account") }}'>
+<div class='title' id="delete">
+<p id='deleteLink' class='title'> Delete Account </p>
+</div>
+</a>
+{% endblock %}
