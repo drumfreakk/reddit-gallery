@@ -2,7 +2,7 @@
 
 {% block img %}
 	<center id='{{ POSTID }}'>
-	<a href='{{ url_for("post.post", postId=POSTID) }}'>	
+	<a href='#{{ POSTID }}'>	
 	<p class='title'>{{ TITLE }}</p>
 	<img class="pic" height="1080" src="{{ SRC }}">
 {% endblock %}

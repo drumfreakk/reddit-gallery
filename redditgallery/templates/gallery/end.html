@@ -6,6 +6,7 @@
 <div onclick="vote('up', '{{ POSTID }}')" class='notUp upv' id='{{ POSTID }}up'>Upvote </div>
 <div onclick="vote('down', '{{ POSTID }}')" class='notDown downv' id='{{ POSTID }}down'>Downvote </div>
 <div onclick='save("{{ POSTID }}")' class='notsave savev' id='{{ POSTID }}save'>Save</div>
+<a href='{{ url_for("post.post", postId=POSTID) }}'>Permalink</a>
 </div>
 </center>
 </br>
