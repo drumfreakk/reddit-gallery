@@ -16,23 +16,23 @@ def prepare_post(submission, doGfy=True):
 		title = submission.title
 
 		if submission.over_18 == True and g.user['show_nsfw'] == False:
-			outp = render_template('gallery/nsfw.html', TITLE=title, POSTID=pId)
+			outp = render_template('gallery/pictures/nsfw.html', TITLE=title, POSTID=pId)
 		elif 'https://imgur.com/a/' in url:	
-			outp = render_template('gallery/imguralbum.html', TITLE=title, POSTID=pId, WEBID=url[20:])
+			outp = render_template('gallery/pictures/imguralbum.html', TITLE=title, POSTID=pId, WEBID=url[20:])
 		elif "comments" in url:
-			outp = render_template('gallery/text.html', TITLE=title, POSTID=pId, TYPE='Text')
+			outp = render_template('gallery/pictures/text.html', TITLE=title, POSTID=pId, TYPE='Text')
 		elif "https://gfycat.com/" in url:
 			if doGfy == False:
-				outp = render_template('gallery/text.html', TITLE=title, POSTID=pId, TYPE='Gfycat')
+				outp = render_template('gallery/pictures/text.html', TITLE=title, POSTID=pId, TYPE='Gfycat')
 			else:
-				outp= render_template('gallery/gfycat.html', TITLE=title, POSTID=pId, WEBID=url.split("/")[-1])
+				outp= render_template('gallery/pictures/gfycat.html', TITLE=title, POSTID=pId, WEBID=url.split("/")[-1])
 		elif 'https://i.imgur.com/' in url and '.gifv' in url:
-			outp = render_template('gallery/imgurpic.html', TITLE=title, POSTID=pId, WEBID=url[20:-5])
+			outp = render_template('gallery/pictures/imgurpic.html', TITLE=title, POSTID=pId, WEBID=url[20:-5])
 		else:
 			out = ''
 			if '.jpg' not in url and '.png' not in url and '.jpeg' not in url and '.gifv' not in url and '.gif' not in url:
 				out = ".png"
-			outp = render_template('gallery/imgfromsrc.html', SRC=url+out, POSTID=pId, TITLE=title)
+			outp = render_template('gallery/pictures/imgfromsrc.html', SRC=url+out, POSTID=pId, TITLE=title)
 
 		if submission.saved == True:
 			outp = outp.replace('Save', 'Unsave').replace('notsave', 'save')
