@@ -29,10 +29,13 @@ def prepare_post(submission, doGfy=True):
 		elif 'https://i.imgur.com/' in url and '.gifv' in url:
 			outp = render_template('gallery/pictures/imgurpic.html', TITLE=title, POSTID=pId, WEBID=url[20:-5])
 		else:
-			out = ''
-			if '.jpg' not in url and '.png' not in url and '.jpeg' not in url and '.gifv' not in url and '.gif' not in url:
-				out = ".png"
-			outp = render_template('gallery/pictures/imgfromsrc.html', SRC=url+out, POSTID=pId, TITLE=title)
+			if 'https://i.imgur.com/' in url or 'https://i.redd.it/' in url:
+				out = ''
+				if '.jpg' not in url and '.png' not in url and '.jpeg' not in url and '.gifv' not in url and '.gif' not in url:
+					out = ".png"
+				outp = render_template('gallery/pictures/imgfromsrc.html', TITLE=title, POSTID=pId, SRC=url+out)
+			else:
+				outp = render_template('gallery/pictures/false.html', TITLE=title, POSTID=pId)
 
 		if submission.saved == True:
 			outp = outp.replace('Save', 'Unsave').replace('notsave', 'save')

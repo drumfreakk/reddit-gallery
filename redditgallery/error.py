@@ -9,3 +9,5 @@ def bad_request(e):
 def teapot(e):
     return render_template('error/418.html'), 418
 
+def serverErr(e):
+	return render_template('error/500.html'), 500

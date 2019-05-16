@@ -47,6 +47,7 @@ def create_app(test_config=None):
 	app.register_error_handler(400, error.bad_request)
 	app.register_error_handler(404, error.page_not_found)
 	app.register_error_handler(418, error.teapot)
+	app.register_error_handler(500, error.serverErr)
 
 	return app
 
