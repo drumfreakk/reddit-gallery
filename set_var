@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo export FLASK_APP=redditgallery
+echo export FLASK_ENV=development

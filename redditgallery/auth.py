@@ -46,7 +46,7 @@ def register():
 			db.commit()
 			return redirect(url_for('auth.login'))
 
-		flash(error)
+		return render_template('auth/register.html', error=error)
 
 	return render_template('auth/register.html')
 
@@ -71,7 +71,7 @@ def login():
             session['user_id'] = user['id']
             return redirect(url_for('auth.user'))
 
-        flash(error)
+        return render_template('auth/login.html', error=error)
 
     return render_template('auth/login.html')
 
