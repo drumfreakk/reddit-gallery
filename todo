@@ -1,3 +1,5 @@
 fix texts(replace with images?)
 
 add login redirect
+
+add POST only page that returns rendered post, then call that ipv function
