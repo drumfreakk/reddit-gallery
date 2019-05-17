@@ -1,10 +1,12 @@
 {% 	extends "gallery/end.html" %}
 
 {% block img %}
-	<center id='{{ POSTID }}'>
-	<a href='#{{ POSTID }}'>
-	<p class='title'>{{ TITLE }}</p>
-	<blockquote class="imgur-embed-pub" lang="en" data-id="{{ WEBID }}" data-context="false">
+
+<center>
+	<div class="container" id='{{ POSTID }}'>
+		<a href='#{{ POSTID }}'>
+			<p class="tag title">{{ TITLE }}</p>
+	<blockquote class="content imgur-embed-pub" lang="en" data-id="{{ WEBID }}" data-context="false">
 	<a href="//imgur.com/{{ WEBID }}"></a>
 	</blockquote>
 	<script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>

@@ -1,8 +1,11 @@
 {% 	extends "gallery/end.html" %}
 
 {% block img %}
-	<center id='{{ POSTID }}'>
-	<a href='#{{ POSTID }}'>
-	<p class='title'>{{ TITLE }}</p>
-	<p class="falsepost">False Post Type</p>
+
+<center>
+	<div class="container" id='{{ POSTID }}'>
+		<a href='#{{ POSTID }}'>
+			<p class="tag title">{{ TITLE }}</p>
+			<p class="content falsepost">False Post Type</p>
+	
 {% endblock %}

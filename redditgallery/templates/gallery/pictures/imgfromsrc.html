@@ -1,9 +1,11 @@
 {% 	extends "gallery/end.html" %}
 
 {% block img %}
-	<center>
-	<div class='container' id='{{ POSTID }}'>
-	<a href='#{{ POSTID }}'>	
-	<p class='title'>{{ TITLE }}</p>
-	<img class="pic" height="1080" src="{{ SRC }}">
+<center>
+	<div class="container" id='{{ POSTID }}'>
+		<a href='#{{ POSTID }}'>
+			<p class="tag title">{{ TITLE }}</p>
+			<img class="content" height="1080" src="{{ SRC }}">
 {% endblock %}
+
+

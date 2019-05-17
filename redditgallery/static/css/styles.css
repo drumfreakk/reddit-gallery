@@ -2,6 +2,40 @@ body {
 	background-color: #343434;
 }
 
+.container {
+	position: relative;
+
+}
+
+.tag{
+	  position: absolute;
+  left: 0;
+padding: 10px;
+  width: 100%;
+  text-align: center;
+	opacity: 0;
+}
+
+.votes {
+	background-color: #343434;
+	color: white;
+	font-weight: bold;
+	bottom: 0;
+}
+
+.title {
+	background-color: #343434;
+	color: white;
+	font-weight: bold;
+	top: 0;
+
+}
+
+.content{
+	margin-top: 20px;
+}
+
+
 #delete {
 	color: red;
 	border: 1px solid red;
@@ -19,11 +53,6 @@ body {
 	display: inline-block;
 	vertical-align: middle;
 	line-height: normal;
-}
-
-.title {
-	color: white;
-	font-weight: bold;
 }
 
 .text {
@@ -74,6 +103,7 @@ nav {
 	position: fixed;
 	width: 99%;
 	background-color: rgba(52, 52, 52, 0.5);
+	z-index: 5;
 }
 
 nav h1 { 

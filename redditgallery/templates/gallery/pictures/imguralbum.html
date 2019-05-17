@@ -1,8 +1,10 @@
 {% 	extends "gallery/end.html" %}
 
 {% block img %}
-	<center id='{{ POSTID }}'>
-	<a href='#{{ POSTID }}'>
-	<p class='title'>{{ TITLE }}</p>
-	<iframe id="{{ POSTID }}" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="height: 700px; width: 500px; margin: 10px 0px; padding: 0px;" class="imgur-embed-iframe-pub imgur-embed-iframe-pub-a-{{ WEBID }}-true-500" scrolling="no" src="https://imgur.com/a/{{ WEBID }}/embed?pub=true&amp;ref=https%3A%2F%2Fimgur.com%2Fa%2F{{ WEBID }}&amp;analytics=false&amp;w=500" id="imgur-embed-iframe-pub-a-{{ WEBID }}"></iframe>
+<center>
+	<div class="container" id='{{ POSTID }}'>
+		<a href='#{{ POSTID }}'>
+			<p class="tag title">{{ TITLE }}</p>
+
+	<iframe class="content" id="{{ POSTID }}" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" style="height: 700px; width: 500px; margin: 10px 0px; padding: 0px;" class="imgur-embed-iframe-pub imgur-embed-iframe-pub-a-{{ WEBID }}-true-500" scrolling="no" src="https://imgur.com/a/{{ WEBID }}/embed?pub=true&amp;ref=https%3A%2F%2Fimgur.com%2Fa%2F{{ WEBID }}&amp;analytics=false&amp;w=500" id="imgur-embed-iframe-pub-a-{{ WEBID }}"></iframe>
 {% endblock %}
