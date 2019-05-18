@@ -53,7 +53,7 @@ def prepare_post(submission, doGfy=True):
 @login_required
 def post(postId):
 	try:
-		return render_template('gallery/gallery.html', pics=[prepare_post(g.reddit.submission(id=postId))])
+		return render_template('gallery/singlePicture.html', item=prepare_post(g.reddit.submission(id=postId)))
 	except:
 		abort(400)
 
