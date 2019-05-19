@@ -2,4 +2,4 @@ fix texts(replace with images?)
 
 add login redirect
 
-add POST only page that returns rendered post, then call that ipv function
+add way to add new posts, without looping the fuck out of it

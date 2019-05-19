@@ -4,6 +4,8 @@
 
 {% block content %}
 
-{{item|safe}}
+<param id='type' value='single'>
+<param id='gfycat' value='true'>
+<div id="content"> <param class='postId' value='{{ item }}'> <img src="{{ url_for('static', filename='img/loading.gif') }}"></div>
 
 {% endblock %}

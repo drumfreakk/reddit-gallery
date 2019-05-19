@@ -11,7 +11,7 @@ import praw
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp.route('/register', methods=('GET', 'POST'))
+@bp.route('/register/', methods=('GET', 'POST'))
 def register():
 	if request.method == 'POST':
 		username = request.form['username']
@@ -69,7 +69,7 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('auth.user'))
+            return redirect(url_for('index.index'))
 
         return render_template('auth/login.html', error=error)
 
@@ -101,16 +101,11 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login_red'))
 
         return view(**kwargs)
 
     return wrapped_view
-
-@bp.route('/user')
-@login_required
-def user():
-	return render_template('auth/user.html')
 
 @bp.route('/settings', methods=('GET', 'POST'))
 @login_required

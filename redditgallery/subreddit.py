@@ -8,54 +8,59 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from redditgallery.auth import login_required
 from redditgallery.post import prepare_post
 
+import pprint
+
 bp = Blueprint('subreddit', __name__, url_prefix='/r')
 
+def getSubr(sub, sort, limit):
+	subreddit = g.reddit.subreddit(sub)
+	if "top" in sort:
+		subr = subreddit.top(sort.split("@")[1], limit=limit)
+	elif "controversial" in sort:
+		subr = subreddit.controversial(sort.split("@")[1], limit=limit)
+	elif sort == "hot":
+		subr = subreddit.hot(limit=limit)
+	elif sort == "rising":
+		subr = subreddit.rising(limit=limit)
+	elif sort == "new":
+		subr = subreddit.new(limit=limit)
+	elif sort == "gilded":
+		subr = subreddit.gilded(limit=limit)
+	else:
+		abort(400)
+	return subr
+
+@bp.route('/getNext/', methods=['POST',])
+def getNext():
+	if request.method == 'POST':
+		sort = request.form['sort']
+		next = int(request.form['next'])
+		subr = request.form['subr']
+		ids = []
+		for submission in getSubr(subr, sort, next):
+			ids.append(submission.id)
+		return ids[-1]
+
+	else:
+		abort(405);
 
 @bp.route('/<sub>/')
 def nocount(sub):
-	return redirect(url_for('subreddit.posts', sub=sub, count=current_app.config['STANDARD_LIMIT'], sort=current_app.config['STANDARD_SORT']))
+	return redirect(url_for('subreddit.posts', sub=sub, sort=current_app.config['STANDARD_SORT']))
 
-
-@bp.route('/<sub>/<int:count>/')
-def nosort(sub, count):
-	return redirect(url_for('subreddit.posts', sub=sub, count=count, sort=current_app.config['STANDARD_SORT'])) 
-
-
-@bp.route('/<sub>/<int:count>/<sort>/')
+@bp.route('/<sub>/<sort>/')
 @login_required
-def posts(sub, count, sort):
+def posts(sub, sort):
 	try:
-		subreddit = g.reddit.subreddit(sub)
-		doGfy = False
-		limit = count
+		doGfy = 'false'
 
 		if "&" in sort:
 			sortB = sort.split("&")
 			sort = sortB[0]
 			if sortB[1] == "gfycat":
-				doGfy = True
+				doGfy = 'true'
 
-		if "top" in sort:
-			subr = subreddit.top(sort.split("@")[1], limit=limit)
-		elif "controversial" in sort:
-			subr = subreddit.controversial(sort.split("@")[1], limit=limit)
-		elif sort == "hot":
-			subr = subreddit.hot(limit=limit)
-		elif sort == "rising":
-			subr = subreddit.rising(limit=limit)
-		elif sort == "new":
-			subr = subreddit.new(limit=limit)
-		elif sort == "gilded":
-			subr = subreddit.gilded(limit=limit)
-		else:
-			abort(400)
-
-		items = []
-
-		for submission in subr:
-			items.append(prepare_post(submission, doGfy))
-
-		return render_template('gallery/gallery.html', pics=items)
+		return render_template('gallery/gallery.html', gfy=doGfy, sort=sort, subr=sub)
 	except IndexError:
 		abort(400)
 

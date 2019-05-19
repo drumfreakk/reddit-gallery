@@ -1,5 +1,5 @@
 function vote(type, postId){
-$.ajax({
+	$.ajax({
             url: '/p/'.concat(postId).concat('/vote'),
             data: {voteType: type},
             type: 'POST',
@@ -31,7 +31,7 @@ $.ajax({
 }
 
 function save(postId){
-$.ajax({
+	$.ajax({
             url: '/p/'.concat(postId).concat('/save'),
             data: {},
             type: 'POST',
@@ -48,4 +48,7 @@ $.ajax({
                 console.log(error);
             }
         });
+}
+
+function vote_init(){
 }

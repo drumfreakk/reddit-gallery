@@ -4,8 +4,18 @@
 
 {% block content %}
 
-{% for item in pics %}
-	{{item|safe}}
-{% endfor %}
+<param id='type' value='more'>
+<param id='gfy' value='{{ gfy }}'>
+<param id='subr' value="{{ subr }}">
+<param id='sort' value="{{ sort }}">
+
+<div id='content'>
+
+	<div id='inner'></div>
+{# {% for item in pics %}
+	<param class='postId' value='{{ item }}'>
+{% endfor %} #}
+</div>
+
 
 {% endblock %}
