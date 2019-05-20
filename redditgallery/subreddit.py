@@ -52,13 +52,19 @@ def nocount(sub):
 @login_required
 def posts(sub, sort):
 	try:
-		doGfy = 'false'
+		
+		if g.user['show_gfycat'] == False:
+			doGfy = 'false'
+		else:
+			doGfy = 'true'
 
 		if "&" in sort:
 			sortB = sort.split("&")
 			sort = sortB[0]
 			if sortB[1] == "gfycat":
 				doGfy = 'true'
+			elif sortB[1] == "noGfycat":
+				doGfy = 'false'
 
 		return render_template('gallery/gallery.html', gfy=doGfy, sort=sort, subr=sub)
 	except IndexError:

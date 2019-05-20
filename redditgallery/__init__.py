@@ -9,9 +9,8 @@ def create_app(test_config=None):
 	app.config.from_mapping(
 		SECRET_KEY='dev',
 		DATABASE=os.path.join(app.instance_path, 'reddit-gallery.sqlite'),
-		USER_AGENT='linux:slideshow_web:v2.0.0 (by /u/Kip-Bot)',
+		USER_AGENT='linux:slideshow_web:v3.0.0 (by /u/IndependentAmount)',
 		STANDARD_SORT='hot',
-		STANDARD_LIMIT=10,
 	)
 
 	if test_config is None:

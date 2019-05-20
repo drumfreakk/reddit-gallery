@@ -7,6 +7,7 @@ CREATE TABLE accounts (
   accpassword TEXT NOT NULL,
   client_id TEXT NOT NULL,
   client_secret TEXT NOT NULL,
-  show_nsfw TINYINT NOT NULL
+  show_nsfw TINYINT NOT NULL,
+  show_gfycat TINYINT NOT NULL
 );
 

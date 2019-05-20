@@ -40,8 +40,8 @@ def register():
 
 		if error is None:
 			db.execute(
-				'INSERT INTO accounts (username, password, accpassword, client_id, client_secret, show_nsfw) VALUES (?, ?, ?, ?, ?, ?)',
-				(username, password, generate_password_hash(accpassword), client_id, client_secret, 0)
+				'INSERT INTO accounts (username, password, accpassword, client_id, client_secret, show_nsfw, show_gfycat) VALUES (?, ?, ?, ?, ?, ?, ?)',
+				(username, password, generate_password_hash(accpassword), client_id, client_secret, 0, 0)
 			)
 			db.commit()
 			return redirect(url_for('auth.login'))
@@ -101,13 +101,13 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login_red'))
+            return redirect(url_for('auth.login'))
 
         return view(**kwargs)
 
     return wrapped_view
 
-@bp.route('/settings', methods=('GET', 'POST'))
+@bp.route('/settings/', methods=('GET', 'POST'))
 @login_required
 def settings():
 	msg = ''	
@@ -115,19 +115,27 @@ def settings():
 	if request.method == 'POST':
 		nsfw = request.form['show_nsfw']
 		pswd = request.form['password']
+		gfycat = request.form['show_gfycat']
+
 		if nsfw == 'true':
 			nsfw = 1
 		else:
 			nsfw = 0
+
+		if gfycat == 'true':
+			gfycat = 1
+		else:
+			gfycat = 0
+
 		db = get_db()
 		if not pswd == '':
 			db.execute('UPDATE accounts SET accpassword = ? WHERE id = ?', (generate_password_hash(pswd), g.user['id']))
-		db.execute('UPDATE accounts SET show_nsfw = ? WHERE id = ?', (nsfw, g.user['id']))
+		db.execute('UPDATE accounts SET show_nsfw = ?, show_gfycat = ? WHERE id = ?', (nsfw, gfycat, g.user['id']))
 		db.commit()
 		msg = 'Settings saved succesfully!'
-		return render_template('auth/settings.html', nsfw=nsfw, msg=msg)
+		return render_template('auth/settings.html', nsfw=nsfw, msg=msg, gfycat=gfycat)
 
-	return render_template('auth/settings.html', nsfw=g.user['show_nsfw'], msg=msg)
+	return render_template('auth/settings.html', nsfw=g.user['show_nsfw'], msg=msg, gfycat=g.user['show_gfycat'])
 
 @bp.route('/delete_account', methods=('GET', 'POST'))
 @login_required

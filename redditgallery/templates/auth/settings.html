@@ -7,8 +7,21 @@
 <form class='text' method='post'>
 	<p class='title'> Change Reddit Gallery password: </p>
 	<label for="password">New Password </label>
-    	<input type="password" name="password" id="password">
-		</br>
+   	<input type="password" name="password" id="password">
+
+	</br>
+
+	<p class='title'> Automatically show GfyCat Content?</p>
+	{% if gfycat == 1 %}
+	<input type="radio" name="show_gfycat" value="true" checked> True<br>
+	<input type="radio" name="show_gfycat" value="false"> False<br>
+	{% else %}
+	<input type="radio" name="show_gfycat" value="true"> True<br>
+	<input type="radio" name="show_gfycat" value="false" checked> False<br>
+	{% endif %}
+
+	</br>
+
 	<p class='title'> Show NSFW Content?</p>
 	{% if nsfw == 1 %}
 	<input type="radio" name="show_nsfw" value="true" checked> True<br>
