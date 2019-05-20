@@ -23,7 +23,8 @@ function callAjax(url, data, onSuccess){
 	});	
 }
 
-function empty(){}
+function empty(response){
+}
 
 function postSuccess(response){
 	document.getElementById('content').innerHTML = response;
@@ -32,47 +33,27 @@ function postSuccess(response){
 
 
 function getIds(next){
-	return callAjax('/r/getNext/', {sort : sortM, subr : sub, next : next}, empty);
+	return callAjax('/r/getNext/', {sort : sortM, subr : sub, next : next, render : 1, gfycat : gfy}, empty);
 }
 
 function getPost(id){
 	return callAjax('/p/render/', {postId : id, gfyCat : gfy}, empty);
 }
 
-function loadFiveEls(){
+
+function loadEls(){
 	if(allowLoad == false){
 		return;
 	}
 
-	var max_tmp = max;
-	var doing_tmp = doing;
-
-	var reset = false;
-
-	if(working == true){
-		doing = 'inner';
-		reset = true;
-	} else {
-		doing = 'inner_2';
-	}
-
-	working = true;
-	$.when(getIds(max_tmp), getIds(max_tmp + 1), getIds(max_tmp + 2), getIds(max_tmp + 3), getIds(max_tmp + 4)).done(function(first, second, third, fourth, fifth){
-		$.when(getPost(first[0]), getPost(second[0]), getPost(third[0]), getPost(fourth[0]), getPost(fifth[0])).done(function(firstB, secondB, thirdB, fourthB, fifthB){
-			document.getElementById(doing_tmp).outerHTML = firstB[0] + secondB[0] + thirdB[0] + fourthB[0] + fifthB[0] + "<div id='" + doing_tmp + "'></div>";
-			working = false;
-			loadHoverElements();
-			if(reset == true){
-				allowLoad = true;
-			}
-		});
+	$.when(getIds(max), getIds(max + 1), getIds(max + 2), getIds(max + 3), getIds(max + 4), getIds(max + 5), getIds(max + 6), getIds(max + 7), getIds(max + 8), getIds(max + 9)).done(function(A, B, C, D, E, F, G, H, I, J){
+		document.getElementById('inner').outerHTML = A[0] + B[0] + C[0] + D[0] + E[0] + F[0] + G[0] + H[0] + I[0] + J[0] + "<div id='inner'></div>";
+		loadHoverElements();
+		allowLoad = true;
 	});
-	max = max_tmp + 5;
-}
+	max += 10;
 
-function loadEls(){
-	loadFiveEls();
-	loadFiveEls();
+
 	allowLoad = false;
 }
 

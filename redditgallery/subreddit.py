@@ -6,7 +6,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from redditgallery.auth import login_required
-from redditgallery.post import prepare_post
+from redditgallery.post import render
 
 import pprint
 
@@ -36,9 +36,16 @@ def getNext():
 		sort = request.form['sort']
 		next = int(request.form['next'])
 		subr = request.form['subr']
+		doRender = int(request.form['render'])
+		gfycat = request.form['gfycat']
+
 		ids = []
 		for submission in getSubr(subr, sort, next):
 			ids.append(submission.id)
+
+		if doRender == 1:
+			return render(ids[-1], gfycat)
+
 		return ids[-1]
 
 	else:
