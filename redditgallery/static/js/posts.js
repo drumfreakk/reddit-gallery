@@ -3,6 +3,12 @@ var sortM;
 var sub;
 var gfy;
 
+var doing = 'inner';
+var working = false;
+var max = 1;
+
+var allowLoad = true;
+
 function callAjax(url, data, onSuccess){
 	return $.ajax({
 		url: url,
@@ -21,6 +27,7 @@ function empty(){}
 
 function postSuccess(response){
 	document.getElementById('content').innerHTML = response;
+	loadHoverElements();
 }
 
 
@@ -32,16 +39,19 @@ function getPost(id){
 	return callAjax('/p/render/', {postId : id, gfyCat : gfy}, empty);
 }
 
-var doing = 'inner';
-var working = false;
-var max = 1;
+function loadFiveEls(){
+	if(allowLoad == false){
+		return;
+	}
 
-function first(){
 	var max_tmp = max;
 	var doing_tmp = doing;
 
+	var reset = false;
+
 	if(working == true){
 		doing = 'inner';
+		reset = true;
 	} else {
 		doing = 'inner_2';
 	}
@@ -52,9 +62,18 @@ function first(){
 			document.getElementById(doing_tmp).outerHTML = firstB[0] + secondB[0] + thirdB[0] + fourthB[0] + fifthB[0] + "<div id='" + doing_tmp + "'></div>";
 			working = false;
 			loadHoverElements();
+			if(reset == true){
+				allowLoad = true;
+			}
 		});
 	});
 	max = max_tmp + 5;
+}
+
+function loadEls(){
+	loadFiveEls();
+	loadFiveEls();
+	allowLoad = false;
 }
 
 function posts_init(){
@@ -65,16 +84,14 @@ function posts_init(){
 		sub = document.getElementById('subr').value;
 		gfy = document.getElementById('gfy').value;
 
-		first();
-		first();
-
+		loadEls();
 	}
 }
 
 window.onscroll = function(ev) {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-		window.scrollBy(0, -20);
-		first();
+		window.scrollBy(0, -100);
+		loadEls();
     }
 };
 

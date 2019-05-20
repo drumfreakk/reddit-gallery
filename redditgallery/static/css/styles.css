@@ -59,7 +59,7 @@ padding: 10px;
 	color: white;
 }
 
-.nsfw, .falsepost {
+.NSFW, .False {
 	color: red;
 	font-weight: bold;
 	text-decoration: none;
