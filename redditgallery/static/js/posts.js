@@ -1,4 +1,8 @@
 
+var sortM;
+var sub;
+var gfy;
+
 function callAjax(url, data, onSuccess){
 	return $.ajax({
 		url: url,
@@ -13,51 +17,63 @@ function callAjax(url, data, onSuccess){
 	});	
 }
 
-var nextId;
+function empty(){}
 
 function postSuccess(response){
-	console.log('postSuccess');
 	document.getElementById('content').innerHTML = response;
 }
 
-function aSubSuccess(response){
-	nextId = response;
-	console.log('aSubSuccess');
+
+function getIds(next){
+	return callAjax('/r/getNext/', {sort : sortM, subr : sub, next : next}, empty);
 }
 
-function subSuccess(response){
-	console.log('subsuccess');
-	document.getElementById('inner').outerHTML = response + "<div id='inner'></div>";
+function getPost(id){
+	return callAjax('/p/render/', {postId : id, gfyCat : gfy}, empty);
+}
+
+var doing = 'inner';
+var working = false;
+var max = 1;
+
+function first(){
+	var max_tmp = max;
+	var doing_tmp = doing;
+
+	if(working == true){
+		doing = 'inner';
+	} else {
+		doing = 'inner_2';
+	}
+
+	working = true;
+	$.when(getIds(max_tmp), getIds(max_tmp + 1), getIds(max_tmp + 2), getIds(max_tmp + 3), getIds(max_tmp + 4)).done(function(first, second, third, fourth, fifth){
+		$.when(getPost(first[0]), getPost(second[0]), getPost(third[0]), getPost(fourth[0]), getPost(fifth[0])).done(function(firstB, secondB, thirdB, fourthB, fifthB){
+			document.getElementById(doing_tmp).outerHTML = firstB[0] + secondB[0] + thirdB[0] + fourthB[0] + fifthB[0] + "<div id='" + doing_tmp + "'></div>";
+			working = false;
+		});
+	});
+	max = max_tmp + 5;
 }
 
 function posts_init(){
-
 	if(document.getElementById('type').value == 'single'){
 		callAjax('/p/render/', {postId : document.getElementsByClassName('postId')[0].value, gfyCat : 'true'}, postSuccess);
 	} else{
-		sortM = document.getElementById('sort').value
-		sub = document.getElementById('subr').value
-		gfy = document.getElementById('gfy').value
+		sortM = document.getElementById('sort').value;
+		sub = document.getElementById('subr').value;
+		gfy = document.getElementById('gfy').value;
 
-		data = {sort : sortM, subr : sub, next : 1}
-
-		$.when(callAjax('/r/getNext/', data, aSubSuccess)).done(function(resp){
-			console.log("got next id");
-			callAjax('/p/render/', {postId : nextId, gfyCat : gfy}, subSuccess);
-		});
-
-		
-
-//		$.when(callAjax('/p/render/', {postId : nextId, gfyCat : gfy}, subSuccess)).done(function(resp){
-//			console.log("got post");
-//		});
-
-//		for(var x = 0; x < ids.length; x++){
-//				$.when(loadEl()).done(function(resp){
-//					console.log("Finished summin");
-//				});
-//		}
+		first();
+		first();
 
 	}
 }
+
+window.onscroll = function(ev) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+		window.scrollBy(0, -20);
+		first();
+    }
+};
 

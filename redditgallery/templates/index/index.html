@@ -5,7 +5,7 @@
 {% block content %}
 <div class='text'>
 <p><span class='title'>Subreddits: </span> /r/&ltsub&gt/&ltamount of posts to load&gt/&lthow to sort(hot, new, gilded, controversial@time and top@time)(optional: &gfycat to load gfycat links)&gt</p>
-<p><span class='title'>Example: </span><a href='{{ url_for('subreddit.posts', count=10, sort="hot", sub="dankmemes") }}'>localhost:5000{{ url_for('subreddit.posts', count=10, sort="hot", sub="dankmemes") }}</a></p>
+<p><span class='title'>Example: </span><a href='{{ url_for('subreddit.posts', count=10, sort="hot", sub="dankmemes") }}'>localhost:5000{{ url_for('subreddit.posts', sort="hot", sub="dankmemes") }}</a></p>
 
 <p><span class='title'>Posts: </span> /p/&ltpost id&gt</p>
 <p><span class='title'>Example: </span><a href='{{ url_for('post.post', postId="bikmus") }}'>localhost:5000{{ url_for('post.post', postId="bikmus") }}</a></p>
