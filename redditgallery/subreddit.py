@@ -14,21 +14,24 @@ bp = Blueprint('subreddit', __name__, url_prefix='/r')
 
 def getSubr(sub, sort, limit):
 	subreddit = g.reddit.subreddit(sub)
-	if "top" in sort:
-		subr = subreddit.top(sort.split("@")[1], limit=limit)
-	elif "controversial" in sort:
-		subr = subreddit.controversial(sort.split("@")[1], limit=limit)
-	elif sort == "hot":
-		subr = subreddit.hot(limit=limit)
-	elif sort == "rising":
-		subr = subreddit.rising(limit=limit)
-	elif sort == "new":
-		subr = subreddit.new(limit=limit)
-	elif sort == "gilded":
-		subr = subreddit.gilded(limit=limit)
-	else:
-		abort(400)
-	return subr
+	try:
+		if "top" in sort:
+			subr = subreddit.top(sort.split("@")[1], limit=limit)
+		elif "controversial" in sort:
+			subr = subreddit.controversial(sort.split("@")[1], limit=limit)
+		elif "hot" in sort:
+			subr = subreddit.hot(limit=limit)
+		elif "rising" in sort:
+			subr = subreddit.rising(limit=limit)
+		elif "new" in sort:
+			subr = subreddit.new(limit=limit)
+		elif "gilded" in sort:
+			subr = subreddit.gilded(limit=limit)
+		else:
+			abort(400)
+		return subr
+	except IndexError:
+		return 'Index Error'
 
 @bp.route('/getNext/', methods=['POST',])
 def getNext():

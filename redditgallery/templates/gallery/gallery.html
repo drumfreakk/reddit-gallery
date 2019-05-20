@@ -4,6 +4,17 @@
 
 {% block content %}
 
+<table id='sort_select'>
+<tr>
+  <td onclick='select("hot")'>Hot</td>
+  <td onclick='select("controversial@day")'>Controversial</td>
+  <td onclick='select("top@day")'>Top</td>
+  <td onclick='select("rising")'>Rising</td>
+  <td onclick='select("new")'>New</td>
+  <td onclick='select("gilded")'>Gilded</td>
+</tr>
+</table>
+
 <param id='type' value='more'>
 <param id='gfy' value='{{ gfy }}'>
 <param id='subr' value="{{ subr }}">
