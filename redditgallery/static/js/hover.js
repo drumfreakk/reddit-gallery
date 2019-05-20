@@ -1,6 +1,6 @@
 
 
-function hover_loaded(){
+function loadHoverElements(){
 	$("center").hover(function(){
 			var els = this.getElementsByClassName("tag");
 			for(var i = 0; i < els.length; ++i){

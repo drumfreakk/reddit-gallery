@@ -51,6 +51,7 @@ function first(){
 		$.when(getPost(first[0]), getPost(second[0]), getPost(third[0]), getPost(fourth[0]), getPost(fifth[0])).done(function(firstB, secondB, thirdB, fourthB, fifthB){
 			document.getElementById(doing_tmp).outerHTML = firstB[0] + secondB[0] + thirdB[0] + fourthB[0] + fifthB[0] + "<div id='" + doing_tmp + "'></div>";
 			working = false;
+			loadHoverElements();
 		});
 	});
 	max = max_tmp + 5;
